@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "811374781105",
+    "firebase_url": "https://roomres-c3d25.firebaseio.com",
+    "project_id": "roomres-c3d25",
+    "storage_bucket": "roomres-c3d25.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:811374781105:android:0378946e17a00785edf890",
+        "android_client_info": {
+          "package_name": "com.example.roomres"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "811374781105-0gncbteugcd2i1ou536b987572t2vbvk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhSvb2G_NkKG6iOgoQ4nqBD0kMYsJCP6w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "811374781105-0gncbteugcd2i1ou536b987572t2vbvk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

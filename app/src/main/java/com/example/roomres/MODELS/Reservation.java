@@ -1,8 +1,13 @@
-package com.example.roomres;
+package com.example.roomres.MODELS;
+
+import androidx.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Reservation implements Serializable {
 
@@ -24,39 +29,41 @@ public class Reservation implements Serializable {
     @SerializedName("roomId")
     private int roomId;
 
-    public Reservation(){
-    }
+    private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm");
 
-    public Reservation(int FromTime, int ToTime, String UserId, String Purpose, int RoomId){
-        fromTime = FromTime;
-        toTime = ToTime;
-        userId = UserId;
-        purpose = Purpose;
-        roomId = RoomId;
-    }
+    public Reservation(){}
 
-    public void setId(int id) {
+    public Reservation(int id, int fromTime, int toTime, String userId, String purpose, int roomId) {
         this.id = id;
+        this.fromTime = fromTime;
+        this.toTime = toTime;
+        this.userId = userId;
+        this.purpose = purpose;
+        this.roomId = roomId;
     }
 
     public int getId() {
         return id;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getFromTimeOld() {
+        return fromTime;
+    }
+
     public void setFromTime(int fromTime) {
         this.fromTime = fromTime;
     }
 
-    public int getFromTime() {
-        return fromTime;
+    public int getToTimeOld() {
+        return toTime;
     }
 
     public void setToTime(int toTime) {
         this.toTime = toTime;
-    }
-
-    public int getToTime() {
-        return toTime;
     }
 
     public String getUserId() {
@@ -83,7 +90,17 @@ public class Reservation implements Serializable {
         this.roomId = roomId;
     }
 
+    public Date getFromTime() {
+        return new Date(getFromTimeOld()*1000);
+    }
 
+    public Date getToTime() {
+        return new Date(getToTimeOld()*1000);
+    }
 
-
+    @NonNull
+    @Override
+    public String toString() {
+        return "Purpose: "+ purpose + "\nFrom: " + dateFormat.format(getFromTime()) + "\nTo: " + dateFormat.format(getToTime());
+    }
 }

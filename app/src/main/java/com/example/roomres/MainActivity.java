@@ -7,13 +7,13 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.roomres.MODELS.Reservation;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -178,11 +178,11 @@ public class MainActivity extends AppCompatActivity {
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Intent intent = new Intent(getBaseContext(), ReservationActivity.class);
+                    Intent intent = new Intent(getBaseContext(), RoomActivity.class);
                     // Book book = books.get((int) id);
                     // Book book = books[(int) id];
                     Reservation reservation = (Reservation) parent.getItemAtPosition(position);
-                    intent.putExtra(ReservationActivity.RESERVATION, reservation);
+                    intent.putExtra(RoomActivity.RESERVATION, reservation);
                     startActivity(intent);
                 }
             });

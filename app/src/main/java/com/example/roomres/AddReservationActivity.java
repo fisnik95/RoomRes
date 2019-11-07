@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.roomres.R;
 import com.google.gson.annotations.SerializedName;
 
 import org.json.JSONException;
