@@ -59,6 +59,12 @@
     </LinearLayout>
 
     <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sign Out"
+        android:id="@+id/button_signOut"/>
+
+    <Button
         android:id="@+id/uden_login_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

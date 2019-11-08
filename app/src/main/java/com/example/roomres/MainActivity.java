@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         updateStatus();
     }
 
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -87,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 createUserAccount();
                 break;
 
-//            case R.id.missingsignoout:
+//            case R.id.:
 //                signUserOut();
 //                break;
 

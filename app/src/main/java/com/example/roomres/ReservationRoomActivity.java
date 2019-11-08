@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CalendarView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,6 +31,7 @@ import okhttp3.Response;
 
 public class ReservationRoomActivity extends AppCompatActivity {
     public static final String URI = "http://anbo-roomreservationv3.azurewebsites.net/api/reservations/room/";
+    public static final String URIFROMTO = "http://anbo-roomreservationv3.azurewebsites.net/api/Reservations/room/$roomId/$fromTime/$toTime";
     public static final String ROOM = "ROOM";
     private Room room;
 
@@ -44,6 +46,11 @@ public class ReservationRoomActivity extends AppCompatActivity {
         TextView roomLabelTxtView = findViewById(R.id.roomName);
         roomLabelTxtView.setText(room.toString());
         getDataUsingOkHttpEnqueue();
+    }
+
+    public void addReservation(View view) {
+        Intent intent = new Intent(this, AddReservationActivity.class);
+        startActivity(intent);
     }
 
     private void getDataUsingOkHttpEnqueue() {
@@ -102,4 +109,5 @@ public class ReservationRoomActivity extends AppCompatActivity {
             }
         });
     }
+
 }
