@@ -50,6 +50,7 @@ public class ReservationRoomActivity extends AppCompatActivity {
 
     public void addReservation(View view) {
         Intent intent = new Intent(this, AddReservationActivity.class);
+        intent.putExtra(room.getId());
         startActivity(intent);
     }
 

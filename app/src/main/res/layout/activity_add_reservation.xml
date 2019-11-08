@@ -14,53 +14,51 @@
         app:layout_constraintTop_toTopOf="parent"
         android:textSize="@dimen/TextSize"/>
 
-
-
     <Button
         android:id="@+id/add_fromTime_DateButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="FromTime"
+        android:hint="FromTime Dato"
         app:layout_constraintEnd_toStartOf="@id/add_fromTime_Timebutton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewAdd"
-        android:onClick="fromTimeDateButton"/>
+        android:onClick="datePickButtonClicked"/>
 
     <Button
         android:id="@+id/add_fromTime_Timebutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="ToTime"
+        android:hint="FromTime Tid"
         android:inputType="textCapWords"
         android:timePickerMode="spinner"
         app:layout_constraintStart_toEndOf="@id/add_fromTime_DateButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textViewAdd"
-        android:onClick="fromTimeTimButton"/>
+        android:onClick="timePickButtonClicked"/>
 
     <Button
         android:id="@+id/add_toTime_DateButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="FromTime"
+        android:hint="ToTime Dato"
         android:inputType="textCapWords"
         android:timePickerMode="spinner"
         app:layout_constraintEnd_toStartOf="@id/add_toTime_Timebutton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/add_fromTime_DateButton"
-        android:onClick="toTimeDateButton"/>
+        android:onClick="datePickButtonClickedTo"/>
 
     <Button
         android:id="@+id/add_toTime_Timebutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="ToTime"
+        android:hint="ToTime Tid"
         android:inputType="textCapWords"
         android:timePickerMode="spinner"
         app:layout_constraintStart_toEndOf="@id/add_toTime_DateButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/add_fromTime_DateButton"
-        android:onClick="toTimeTimeButton"/>
+        android:onClick="timePickButtonClickedTo"/>
 
 
     <EditText

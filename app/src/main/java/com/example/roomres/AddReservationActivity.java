@@ -2,12 +2,14 @@ package com.example.roomres;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -28,28 +30,36 @@ import okhttp3.Response;
 
 public class AddReservationActivity extends AppCompatActivity {
     private Calendar meetingStart = Calendar.getInstance();
-    private Button dateButton;
-    private Button timeButton;
+    private Calendar meetingEnd = Calendar.getInstance();
+    private Button fromdateButton;
+    private Button fromtimeButton;
+
+    private Button todateButton;
+    private Button totimeButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_reservation);
 
-        dateButton = findViewById(R.id.)
+        fromdateButton = findViewById(R.id.add_fromTime_DateButton);
+        fromtimeButton = findViewById(R.id.add_fromTime_Timebutton);
+
+        todateButton  = findViewById(R.id.add_toTime_DateButton);
+        totimeButton  = findViewById(R.id.add_toTime_Timebutton);
+
     }
 
     public void addReservation(View view) {
-       timeButton =  findViewById(R.id.add_reservation_fromtime);
-        timeButton =  findViewById(R.id.add_reservation_totime);
-        Log.d("APP", toTimeButton);
-        Log.d("APP", fromTimeButton);
-       String purpose = ((EditText) findViewById(R.id.add_reservation_purpose)).getText().toString();
+        int fromstart = (int) (meetingStart.getTimeInMillis()/1000);
+        int tostart = (int) (meetingEnd.getTimeInMillis()/1000);
+        String purpose = ((EditText) findViewById(R.id.add_reservation_purpose)).getText().toString();
+        Log.d("TEE", purpose);
         TextView messageView = findViewById(R.id.add_reservation_message);
         try {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("fromTime", fromTimeButton);
-            jsonObject.put("toTime", toTimeButton);
+            jsonObject.put("fromTime", fromstart);
+            jsonObject.put("toTime", tostart);
             jsonObject.put("purpose", purpose);
             String jsonDocument = jsonObject.toString();
             messageView.setText(jsonDocument);
@@ -108,6 +118,48 @@ public class AddReservationActivity extends AppCompatActivity {
         }
     }
 
+    public void datePickButtonClicked(View view) {
+        DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
+                meetingStart.set(Calendar.YEAR, year);
+                meetingStart.set(Calendar.MONTH, month);
+                meetingStart.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                DateFormat dateFormat = DateFormat.getDateInstance();
+                String dateString = dateFormat.format(meetingStart.getTimeInMillis());
+                fromdateButton.setText(dateString);
+            }
+        };
+        Calendar calendar = Calendar.getInstance();
+        int currentYear = calendar.get(Calendar.YEAR);
+        int currentMonth = calendar.get(Calendar.MONTH);
+        int currentDayOfMonth = calendar.get(Calendar.DATE);
+        DatePickerDialog dialog = new DatePickerDialog(
+                this, dateSetListener, currentYear, currentMonth, currentDayOfMonth);
+        dialog.show();
+    }
+
+    public void datePickButtonClickedTo(View view) {
+        DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
+                meetingEnd.set(Calendar.YEAR, year);
+                meetingEnd.set(Calendar.MONTH, month);
+                meetingEnd.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                DateFormat dateFormat = DateFormat.getDateInstance();
+                String dateString = dateFormat.format(meetingStart.getTimeInMillis());
+                todateButton.setText(dateString);
+            }
+        };
+        Calendar calendar = Calendar.getInstance();
+        int currentYear = calendar.get(Calendar.YEAR);
+        int currentMonth = calendar.get(Calendar.MONTH);
+        int currentDayOfMonth = calendar.get(Calendar.DATE);
+        DatePickerDialog dialog = new DatePickerDialog(
+                this, dateSetListener, currentYear, currentMonth, currentDayOfMonth);
+        dialog.show();
+    }
+
     public void timePickButtonClicked(View view) {
         TimePickerDialog.OnTimeSetListener timeSetListener = new TimePickerDialog.OnTimeSetListener() {
             @Override
@@ -116,7 +168,26 @@ public class AddReservationActivity extends AppCompatActivity {
                 meetingStart.set(Calendar.MINUTE, minute);
                 DateFormat df = DateFormat.getTimeInstance();
                 String timeString = df.format(meetingStart.getTimeInMillis());
-                timeButton.setText(timeString);
+                fromtimeButton.setText(timeString);
+            }
+        };
+        Calendar calendar = Calendar.getInstance();
+        int currentHourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
+        int currentMinute = calendar.get(Calendar.MINUTE);
+        TimePickerDialog dialog = new TimePickerDialog(this, timeSetListener, currentHourOfDay,
+                currentMinute, true);
+        dialog.show();
+    }
+
+    public void timePickButtonClickedTo(View view) {
+        TimePickerDialog.OnTimeSetListener timeSetListener = new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
+                meetingEnd.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                meetingEnd.set(Calendar.MINUTE, minute);
+                DateFormat df = DateFormat.getTimeInstance();
+                String timeString = df.format(meetingStart.getTimeInMillis());
+                totimeButton.setText(timeString);
             }
         };
         Calendar calendar = Calendar.getInstance();
