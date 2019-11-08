@@ -9,7 +9,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_marginTop="-30dp">
 
         <TextView
             android:id="@+id/main_message_textview"
@@ -24,16 +25,25 @@
             android:textAlignment="center"
             android:textSize="24sp"/>
 
-        <ListView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/listViewRoomRes"
-            android:layout_weight="20"/>
-
         <CalendarView
             android:id="@+id/calendarView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/listViewRoomRes"
+            android:layout_weight="20"/>
+        
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab"
+            android:onClick="addReservation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:src="@android:drawable/ic_input_add"
+            android:backgroundTint="@color/colorPrimary"
+            android:layout_margin="10dp"/>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

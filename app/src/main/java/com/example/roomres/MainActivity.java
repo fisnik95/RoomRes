@@ -1,191 +1,220 @@
 package com.example.roomres;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.widget.TextViewCompat;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.example.roomres.MODELS.Reservation;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseUser;
 
-import org.jetbrains.annotations.NotNull;
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+    private final String TAG = "SIGNIN";
 
-import java.io.IOException;
+    private FirebaseAuth firebaseAuth;
+    private FirebaseAuth.AuthStateListener firbaseAuthListener;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-import okhttp3.ResponseBody;
-
-public class MainActivity extends AppCompatActivity {
-
-    private static final String BASE_URI = "http://anbo-roomreservationv3.azurewebsites.net/api/Reservations";
+    private EditText myPassword;
+    private EditText myMail;
+    private Button btnNext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        TextView listHeader = new TextView(this);
-        listHeader.setText("Reservation");
-        TextViewCompat.setTextAppearance(listHeader, android.R.style.TextAppearance_Large);
+        findViewById(R.id.button_Register).setOnClickListener(this);
+        findViewById(R.id.button_login).setOnClickListener(this);
+        findViewById(R.id.uden_login_button).setOnClickListener(this);
 
-        ListView listView = findViewById(R.id.main_reservation_listview);
-        listView.addHeaderView(listHeader);
-    }
+        myMail = (EditText)findViewById(R.id.email_Edittext);
+        myPassword = (EditText)findViewById(R.id.password_Edittext);
 
-    public void addReservation(View veiw){
-        Intent intent = new Intent(this, AddReservationActivity.class);
-        startActivity(intent);
+        firebaseAuth = FirebaseAuth.getInstance();
+
+        firbaseAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null){
+                    Log.d(TAG, "Succes" + user.getUid());
+                } else {
+                    Log.d(TAG, "Ingen Succes");
+                }
+            }
+        };
+        updateStatus();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        ReadTask task = new ReadTask();
-        task.execute(BASE_URI);
-
-        //getDataUsingOkHttpEnqueue();
+        firebaseAuth.addAuthStateListener(firbaseAuthListener);
     }
 
-    private void getDataUsingOkHttpEnqueue() {
-        OkHttpClient client = new OkHttpClient();
-        Request.Builder requestBuilder = new Request.Builder();
-        requestBuilder.url(BASE_URI);
-        Request request = requestBuilder.build();
-        Call call = client.newCall(request);
-        call.enqueue(new Callback() { // Alternative to AsyncTask
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull final Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    final String jsonString = response.body().string();
-                    runOnUiThread(new Runnable() {
-                        // https://stackoverflow.com/questions/33418232/okhttp-update-ui-from-enqueue-callback
-                        @Override
-                        public void run() {
-                            populateList(jsonString);
-                        }
-                    });
-                } else {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            TextView messageView = findViewById(R.id.main_message_textview);
-                            messageView.setText(BASE_URI + "\n" + response.code() + " " + response.message());
-                        }
-                    });
-                }
-            }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (firbaseAuthListener != null){
+            firebaseAuth.removeAuthStateListener(firbaseAuthListener);
+        }
+    }
 
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull final IOException ex) {
-                runOnUiThread(new Runnable() {
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.button_login:
+                signUserIn();
+                break;
+
+            case R.id.button_Register:
+                createUserAccount();
+                break;
+
+//            case R.id.missingsignoout:
+//                signUserOut();
+//                break;
+
+            case R.id.uden_login_button:
+                roomView(v);
+                break;
+        }
+    }
+
+    private boolean checkFormFields() {
+        String email, password;
+
+        email = myMail.getText().toString();
+        password = myPassword.getText().toString();
+
+        if (email.isEmpty()) {
+            myMail.setError("Email Required");
+            return false;
+        }
+        if (password.isEmpty()){
+            myPassword.setError("Password Required");
+            return false;
+        }
+
+        return true;
+    }
+
+    private void updateStatus() {
+        TextView tvStat = (TextView)findViewById(R.id.status_Textview);
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        if (user != null) {
+            tvStat.setText("Signed in: " + user.getEmail());
+        }
+        else {
+            tvStat.setText("Signed Out");
+        }
+    }
+
+    private void updateStatus(String stat) {
+        TextView tvStat = (TextView)findViewById(R.id.status_Textview);
+        tvStat.setText(stat);
+    }
+
+    private void signUserIn() {
+        if (!checkFormFields())
+            return;
+
+        String email = myMail.getText().toString();
+        String password = myPassword.getText().toString();
+
+        firebaseAuth.signInWithEmailAndPassword(email,password)
+                .addOnCompleteListener(this,
+                        new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(MainActivity.this, "Signed in", Toast.LENGTH_SHORT)
+                                            .show();
+                                }
+                                else {
+                                    Toast.makeText(MainActivity.this, "Sign in failed", Toast.LENGTH_SHORT)
+                                            .show();
+                                }
+
+                                updateStatus();
+                            }
+                        })
+                .addOnFailureListener(new OnFailureListener() {
                     @Override
-                    public void run() {
-                        TextView messageView = findViewById(R.id.main_message_textview);
-                        messageView.setText(ex.getMessage());
+                    public void onFailure(@NonNull Exception e) {
+                        if (e instanceof FirebaseAuthInvalidCredentialsException) {
+                            updateStatus("Invalid password.");
+                        }
+                        else if (e instanceof FirebaseAuthInvalidUserException) {
+                            updateStatus("No account with this email.");
+                        }
+                        else {
+                            updateStatus(e.getLocalizedMessage());
+                        }
                     }
                 });
-            }
-        });
     }
 
-
-    private class ReadTask extends AsyncTask<String, Void, String> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected String doInBackground(String... strings) {
-            String uri = strings[0];
-            OkHttpClient client = new OkHttpClient();
-            Request.Builder requestBuilder = new Request.Builder();
-            requestBuilder.url(uri);
-            Request request = requestBuilder.build();
-            Call call = client.newCall(request);
-            try {
-                Response response = call.execute();
-                if (response.isSuccessful()) {
-                    ResponseBody responseBody = response.body();
-                    String jsonString = responseBody.string();
-                    return jsonString;
-                } else {
-                    cancel(true);
-                    return uri + "\n" + response.code() + " " + response.message();
-                }
-            } catch (IOException ex) {
-                cancel(true);
-                return ex.getMessage();
-            }
-        }
-
-        @Override
-        protected void onPostExecute(String jsonString) {
-/*            final List<Book> books = new ArrayList<>();
-            try {
-                JSONArray array = new JSONArray(jsonString.toString());
-                for (int i = 0; i < array.length(); i++) {
-                    JSONObject obj = array.getJSONObject(i);
-                    String author = obj.getString("Author");
-                    double price = obj.getDouble("Price");
-                    String title = obj.getString("Title");
-                    String publisher = obj.getString("Publisher");
-                    int id = obj.getInt("Id");
-                    Book book = new Book(id, author, title, publisher, price);
-                    books.add(book);
-                }
-*/
-            ProgressBar progressBar = findViewById(R.id.mainProgressbar);
-            progressBar.setVisibility(View.GONE);
-            populateList(jsonString);
-           /* } catch (JSONException ex) {
-                messageTextView.setText(ex.getMessage());
-                Log.e("BOOKS", ex.getMessage());
-            }*/
-        }
-
-        @Override
-        protected void onCancelled(String message) {
-            ProgressBar progressBar = findViewById(R.id.mainProgressbar);
-            progressBar.setVisibility(View.GONE);
-            TextView messageTextView = findViewById(R.id.main_message_textview);
-            messageTextView.setText(message);
-            Log.e("RESERVATION", message);
-        }
-
+    private void signUserOut() {
+        firebaseAuth.signOut();
+        updateStatus();
     }
 
-        private void populateList(String jsonString) {
-            Gson gson = new GsonBuilder().create();
-            final Reservation[] reservations = gson.fromJson(jsonString, Reservation[].class);
-            ListView listView = findViewById(R.id.main_reservation_listview);
-            //ArrayAdapter<Book> adapter = new ArrayAdapter<>(getBaseContext(), android.R.layout.simple_list_item_1, books);
-            ReservationListItemAdapter adapter = new ReservationListItemAdapter(getBaseContext(), R.layout.reservationlist_item, reservations);
-            listView.setAdapter(adapter);
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Intent intent = new Intent(getBaseContext(), RoomActivity.class);
-                    // Book book = books.get((int) id);
-                    // Book book = books[(int) id];
-                    Reservation reservation = (Reservation) parent.getItemAtPosition(position);
-                    intent.putExtra(RoomActivity.RESERVATION, reservation);
-                    startActivity(intent);
-                }
-            });
-        }
+    private void createUserAccount() {
+        if (!checkFormFields())
+            return;
+
+        String email = myMail.getText().toString();
+        String password = myPassword.getText().toString();
+
+        firebaseAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this,
+                        new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(MainActivity.this, "User created", Toast.LENGTH_SHORT)
+                                            .show();
+                                } else {
+                                    Toast.makeText(MainActivity.this, "Account creation failed", Toast.LENGTH_SHORT)
+                                            .show();
+                                }
+                            }
+                        })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e(TAG, e.toString());
+                        if (e instanceof FirebaseAuthUserCollisionException) {
+                            updateStatus("This email address is already in use.");
+                        }
+                        else {
+                            updateStatus(e.getLocalizedMessage());
+                        }
+                    }
+                });
     }
+
+    public void roomView(View v) {
+        Intent i = new Intent(MainActivity.this, RoomActivity.class);
+        //i.putStringArrayListExtra("logArray", log);
+        MainActivity.this.startActivity(i);
+    }
+}
 

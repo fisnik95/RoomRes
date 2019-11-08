@@ -6,32 +6,68 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity"
-    android:orientation="horizontal"
-    android:weightSum="3">
+    android:orientation="vertical"
+    android:layout_marginTop="30dp"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp">
 
-
-    <ProgressBar
-        android:layout_gravity="center"
-        android:id="@+id/mainProgressbar"
+    <TextView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:text="Email"
+        android:textSize="@dimen/TextSize"/>
+
+    <EditText
+        android:id="@+id/email_Edittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textEmailAddress"
+        android:hint="Email"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Password"
+        android:textSize="@dimen/TextSize"/>
+
+    <EditText
+        android:id="@+id/password_Edittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Password"/>
+
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_weight="1">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2">
 
-        <TextView
-            android:id="@+id/main_message_textview"
+        <Button
+            android:id="@+id/button_login"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Log In" />
 
-        <ListView
-            android:id="@+id/main_reservation_listview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
+        <Button
+            android:id="@+id/button_Register"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Register" />
     </LinearLayout>
+
+    <Button
+        android:id="@+id/uden_login_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Uden login" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/status_Textview"
+        />
 
 </LinearLayout>

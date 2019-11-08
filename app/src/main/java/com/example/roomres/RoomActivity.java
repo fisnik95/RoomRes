@@ -89,7 +89,7 @@ public class RoomActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(RoomActivity.this, "Room clicked: "+parent.getItemAtPosition(position), Toast.LENGTH_SHORT)
                         .show();
-                Intent intent = new Intent(getBaseContext(), RoomActivity.class);
+                Intent intent = new Intent(getBaseContext(), ReservationRoomActivity.class);
                 Room room = (Room) parent.getItemAtPosition(position);
                 intent.putExtra(ReservationRoomActivity.ROOM, room);
                 startActivity(intent);
