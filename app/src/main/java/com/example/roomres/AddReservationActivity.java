@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +14,8 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,6 +40,9 @@ public class AddReservationActivity extends AppCompatActivity {
     private Button todateButton;
     private Button totimeButton;
 
+    public static final String ROOMID = "ROOMID";
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,19 +54,26 @@ public class AddReservationActivity extends AppCompatActivity {
         todateButton  = findViewById(R.id.add_toTime_DateButton);
         totimeButton  = findViewById(R.id.add_toTime_Timebutton);
 
+
+
     }
 
     public void addReservation(View view) {
+        Intent intent = getIntent();
         int fromstart = (int) (meetingStart.getTimeInMillis()/1000);
         int tostart = (int) (meetingEnd.getTimeInMillis()/1000);
         String purpose = ((EditText) findViewById(R.id.add_reservation_purpose)).getText().toString();
+        int roomid = intent.getIntExtra(ROOMID, -1);
+        String userId = FirebaseAuth.getInstance().getUid();
         Log.d("TEE", purpose);
         TextView messageView = findViewById(R.id.add_reservation_message);
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("fromTime", fromstart);
             jsonObject.put("toTime", tostart);
+            jsonObject.put("userId", userId);
             jsonObject.put("purpose", purpose);
+            jsonObject.put("roomId", roomid);
             String jsonDocument = jsonObject.toString();
             messageView.setText(jsonDocument);
             PostBookOkHttpTask task = new PostBookOkHttpTask();

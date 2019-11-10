@@ -8,12 +8,57 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:811374781105:android:33328712a3f57eb6edf890",
+        "android_client_info": {
+          "package_name": "com.example.myapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "811374781105-5913ft5vjq7ocj39bs9r0gsj4u0a1vq2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.myapplication",
+            "certificate_hash": "5b49a556c5b94e02c6cd80215ad8398f93ed0a3d"
+          }
+        },
+        {
+          "client_id": "811374781105-0gncbteugcd2i1ou536b987572t2vbvk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhSvb2G_NkKG6iOgoQ4nqBD0kMYsJCP6w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "811374781105-0gncbteugcd2i1ou536b987572t2vbvk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:811374781105:android:0378946e17a00785edf890",
         "android_client_info": {
           "package_name": "com.example.roomres"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "811374781105-puo4puhhiknn8j65gkkl3ftinh3aaf5e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.roomres",
+            "certificate_hash": "5b49a556c5b94e02c6cd80215ad8398f93ed0a3d"
+          }
+        },
         {
           "client_id": "811374781105-0gncbteugcd2i1ou536b987572t2vbvk.apps.googleusercontent.com",
           "client_type": 3

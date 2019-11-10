@@ -32,15 +32,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private EditText myPassword;
     private EditText myMail;
-    private Button btnNext;
+    private Button uden_login_button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        findViewById(R.id.button_Register).setOnClickListener(this);
+        findViewById(R.id.button_Register).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                createUserAccount();
+            }
+        });
         findViewById(R.id.button_login).setOnClickListener(this);
+        findViewById(R.id.button_signOut).setOnClickListener(this);
         findViewById(R.id.uden_login_button).setOnClickListener(this);
 
         myMail = (EditText)findViewById(R.id.email_Edittext);
@@ -88,9 +94,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 createUserAccount();
                 break;
 
-//            case R.id.:
-//                signUserOut();
-//                break;
+            case R.id.button_signOut:
+                signUserOut();
+                break;
 
             case R.id.uden_login_button:
                 roomView(v);
@@ -105,11 +111,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         password = myPassword.getText().toString();
 
         if (email.isEmpty()) {
-            myMail.setError("Email Required");
+            myMail.setError("Mangler Email");
             return false;
         }
         if (password.isEmpty()){
-            myPassword.setError("Password Required");
+            myPassword.setError("Mangler Password");
             return false;
         }
 
@@ -135,6 +141,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void signUserIn() {
         if (!checkFormFields())
             return;
+
+        Log.d("TEE", "Started logging in");
 
         String email = myMail.getText().toString();
         String password = myPassword.getText().toString();
@@ -178,8 +186,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void createUserAccount() {
-        if (!checkFormFields())
+        if (!checkFormFields()) {
+            Log.d("TEE", "Check form fields failed");
             return;
+        }
+
+        Log.d("TEE", "Start creating password");
 
         String email = myMail.getText().toString();
         String password = myPassword.getText().toString();

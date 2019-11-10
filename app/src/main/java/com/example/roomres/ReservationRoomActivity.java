@@ -31,7 +31,6 @@ import okhttp3.Response;
 
 public class ReservationRoomActivity extends AppCompatActivity {
     public static final String URI = "http://anbo-roomreservationv3.azurewebsites.net/api/reservations/room/";
-    public static final String URIFROMTO = "http://anbo-roomreservationv3.azurewebsites.net/api/Reservations/room/$roomId/$fromTime/$toTime";
     public static final String ROOM = "ROOM";
     private Room room;
 
@@ -50,7 +49,7 @@ public class ReservationRoomActivity extends AppCompatActivity {
 
     public void addReservation(View view) {
         Intent intent = new Intent(this, AddReservationActivity.class);
-        intent.putExtra(room.getId());
+        intent.putExtra(AddReservationActivity.ROOMID, room.getId());
         startActivity(intent);
     }
 
