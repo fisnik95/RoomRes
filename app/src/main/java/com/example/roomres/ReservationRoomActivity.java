@@ -1,10 +1,14 @@
 package com.example.roomres;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -15,12 +19,18 @@ import android.widget.Toast;
 
 import com.example.roomres.MODELS.Reservation;
 import com.example.roomres.MODELS.Room;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -33,6 +43,8 @@ public class ReservationRoomActivity extends AppCompatActivity {
     public static final String URI = "http://anbo-roomreservationv3.azurewebsites.net/api/reservations/room/";
     public static final String ROOM = "ROOM";
     private Room room;
+    private boolean delete = false;
+    private FloatingActionButton delfab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +53,9 @@ public class ReservationRoomActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         room = (Room) intent.getSerializableExtra(ROOM);
+
+        FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.addFab);
+        delfab = (FloatingActionButton)findViewById(R.id.deleteFab);
 
         TextView roomLabelTxtView = findViewById(R.id.roomName);
         roomLabelTxtView.setText(room.toString());
@@ -51,6 +66,48 @@ public class ReservationRoomActivity extends AppCompatActivity {
         Intent intent = new Intent(this, AddReservationActivity.class);
         intent.putExtra(AddReservationActivity.ROOMID, room.getId());
         startActivity(intent);
+    }
+
+    public void setDelete(View v) {
+        delete = !delete;
+        if (delete) {
+            delfab.setImageDrawable(ContextCompat.getDrawable(this, android.R.drawable.ic_menu_delete));
+        }
+        else {
+            delfab.setImageDrawable(ContextCompat.getDrawable(this, android.R.drawable.ic_delete));
+        }
+    }
+
+    private void populateList(String jsonString) {
+        Gson gson = new GsonBuilder().create();
+        Log.d("TEE", jsonString);
+        Reservation[] tempReservations = gson.fromJson(jsonString, Reservation[].class);
+        final ArrayList<Reservation> reservations = new ArrayList<Reservation>(Arrays.asList(tempReservations));
+        Collections.sort(reservations, new Comparator<Reservation>() {
+            public int compare(Reservation o1, Reservation o2) {
+                return o1.compareTo(o2);
+            }
+        });
+        ListView listView = findViewById(R.id.listViewRoomRes);
+        final ArrayAdapter<Reservation> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, reservations);
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(ReservationRoomActivity.this, "Reservation clicked: " + parent.getItemAtPosition(position), Toast.LENGTH_SHORT).show();
+                Reservation clickedRes = (Reservation) parent.getItemAtPosition(position);
+                if (delete) {
+                    Toast.makeText(ReservationRoomActivity.this, "Checking UID", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ReservationRoomActivity.this, clickedRes.getUserId() + " : " + FirebaseAuth.getInstance().getCurrentUser().getUid(), Toast.LENGTH_SHORT).show();
+                    if (clickedRes.getUserId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                        Toast.makeText(ReservationRoomActivity.this, "UID matched", Toast.LENGTH_SHORT).show();
+                        deleteReservation(clickedRes);
+                        reservations.remove(position);
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+            }
+        });
     }
 
     private void getDataUsingOkHttpEnqueue() {
@@ -94,18 +151,24 @@ public class ReservationRoomActivity extends AppCompatActivity {
         });
     }
 
-    private void populateList(String jsonString) {
-        Gson gson = new GsonBuilder().create();
-        Log.d("ROA", jsonString);
-        final Reservation[] reservations = gson.fromJson(jsonString, Reservation[].class);
-        ListView listView = findViewById(R.id.listViewRoomRes);
-        ArrayAdapter<Reservation> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, reservations);
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+    public void deleteReservation(Reservation reservation) {
+        final String url = "http://anbo-roomreservationv3.azurewebsites.net/api/reservations/" + reservation.getId();
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder().url(url).delete().build();
+        client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(ReservationRoomActivity.this, "Reservation clicked: " + parent.getItemAtPosition(position), Toast.LENGTH_SHORT)
-                        .show();
+            public void onFailure(@NotNull Call call, @NotNull final IOException ex) {
+                Toast.makeText(ReservationRoomActivity.this, "onFailure", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull final Response response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(ReservationRoomActivity.this, "Reservation deleted", Toast.LENGTH_SHORT).show();
+                    finish();
+                } else {
+                    Toast.makeText(ReservationRoomActivity.this, "Deletion failed", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }

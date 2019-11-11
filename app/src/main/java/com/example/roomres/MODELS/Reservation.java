@@ -9,7 +9,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Reservation implements Serializable {
+public class Reservation implements Serializable, Comparable<Reservation> {
 
     @SerializedName("id")
     private int id;
@@ -98,9 +98,18 @@ public class Reservation implements Serializable {
         return new Date(getToTimeOld()*1000);
     }
 
+    @Override
+    public int compareTo(Reservation reservation) {
+        return (this.getToTimeOld() < reservation.getToTimeOld() ? -1 :
+                (this.getToTimeOld() == reservation.getToTimeOld() ? 0 : 1));
+    }
+
     @NonNull
     @Override
     public String toString() {
         return "Purpose: "+ purpose + "\nFrom: " + dateFormat.format(getFromTime()) + "\nTo: " + dateFormat.format(getToTime());
     }
+
+
+
 }

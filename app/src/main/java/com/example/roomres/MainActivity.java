@@ -2,11 +2,14 @@ package com.example.roomres;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.widget.TextViewCompat;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -39,12 +42,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        findViewById(R.id.button_Register).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                createUserAccount();
-            }
-        });
+        findViewById(R.id.button_Register).setOnClickListener(this);
         findViewById(R.id.button_login).setOnClickListener(this);
         findViewById(R.id.button_signOut).setOnClickListener(this);
         findViewById(R.id.uden_login_button).setOnClickListener(this);
@@ -68,7 +66,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         updateStatus();
     }
 
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -88,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()){
             case R.id.button_login:
                 signUserIn();
+                roomView(v);
                 break;
 
             case R.id.button_Register:
@@ -146,6 +144,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         String email = myMail.getText().toString();
         String password = myPassword.getText().toString();
+
 
         firebaseAuth.signInWithEmailAndPassword(email,password)
                 .addOnCompleteListener(this,
