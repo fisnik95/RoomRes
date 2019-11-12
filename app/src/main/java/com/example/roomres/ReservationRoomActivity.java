@@ -152,7 +152,7 @@ public class ReservationRoomActivity extends AppCompatActivity {
     }
 
     public void deleteReservation(Reservation reservation) {
-        final String url = "http://anbo-roomreservationv3.azurewebsites.net/api/reservations/" + reservation.getId();
+        final String url = "http://anbo-roomreservationv3.azurewebsites.net½/api/reservations/" + reservation.getId();
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url(url).delete().build();
         client.newCall(request).enqueue(new Callback() {
@@ -163,12 +163,18 @@ public class ReservationRoomActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull final Response response) {
-                if (response.isSuccessful()) {
-                    Toast.makeText(ReservationRoomActivity.this, "Reservation deleted", Toast.LENGTH_SHORT).show();
-                    finish();
-                } else {
-                    Toast.makeText(ReservationRoomActivity.this, "Deletion failed", Toast.LENGTH_SHORT).show();
-                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (response.isSuccessful()) {
+                            Toast.makeText(ReservationRoomActivity.this, "Reservation deleted", Toast.LENGTH_SHORT).show();
+                            finish();
+                        } else {
+                            Toast.makeText(ReservationRoomActivity.this, "Deletion failed", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
             }
         });
     }

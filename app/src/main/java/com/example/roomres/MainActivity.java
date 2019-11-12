@@ -42,6 +42,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if(FirebaseAuth.getInstance().getCurrentUser() != null)
+            roomView(null);
+
         findViewById(R.id.button_Register).setOnClickListener(this);
         findViewById(R.id.button_login).setOnClickListener(this);
         findViewById(R.id.button_signOut).setOnClickListener(this);
