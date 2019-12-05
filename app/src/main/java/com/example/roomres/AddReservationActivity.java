@@ -56,7 +56,36 @@ public class AddReservationActivity extends AppCompatActivity {
 
         todateButton  = findViewById(R.id.add_toTime_DateButton);
         totimeButton  = findViewById(R.id.add_toTime_Timebutton);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+
+
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.login_item:
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
+                return true; // true: menu processing done, no further actions
+            // true: menu processing done, no further actions
+            case R.id.add_item:
+                Intent intentAdd = new Intent(this, AddReservationActivity.class);
+                startActivity(intentAdd);
+                return true; // true: menu processing done, no further actions
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
 
     public void addReservation(View view) {
         Intent intent = getIntent();
@@ -110,6 +139,7 @@ public class AddReservationActivity extends AppCompatActivity {
                 Log.e("BOOKS", ex.getMessage());
                 return ex.getMessage();
             }
+
         }
 
         @Override

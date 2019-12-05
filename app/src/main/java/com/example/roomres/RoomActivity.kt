@@ -18,6 +18,7 @@ import android.widget.Toast
 import com.example.roomres.MODELS.Room
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import kotlinx.android.synthetic.main.lits.*
 
 import java.io.IOException
 
@@ -29,11 +30,38 @@ import okhttp3.Response
 
 class RoomActivity : AppCompatActivity() {
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_room)
 
+
+        setSupportActionBar(toolbar as Toolbar)
+        supportActionBar?.setDisplayUseLogoEnabled(true)
+
         getDataUsingOkHttpEnqueue()
+    }
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+
+        menuInflater.inflate(R.menu.toolbar_menu, menu)
+        return true
+    }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.login_item -> {
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+                return true
+            }
+
+            R.id.add_item -> {
+                val intentAdd = Intent(this, AddReservationActivity::class.java)
+                startActivity(intentAdd)
+                return true
+            }
+            else -> return super.onOptionsItemSelected(item)
+        }
     }
 
     private fun getDataUsingOkHttpEnqueue() {

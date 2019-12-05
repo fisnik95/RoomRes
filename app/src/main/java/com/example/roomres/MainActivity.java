@@ -8,12 +8,15 @@ import androidx.core.widget.TextViewCompat;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,7 +30,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, GestureDetector.OnGestureListener {
     private final String TAG = "SIGNIN";
 
     private FirebaseAuth firebaseAuth;
@@ -36,22 +39,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private EditText myPassword;
     private EditText myMail;
     private Button uden_login_button;
+    private GestureDetector gestureDetector;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        gestureDetector = new GestureDetector(this, this);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        if(FirebaseAuth.getInstance().getCurrentUser() != null)
-            roomView(null);
+
+        //if(FirebaseAuth.getInstance().getCurrentUser() != null)
+        //  roomView(null);
 
         findViewById(R.id.button_Register).setOnClickListener(this);
         findViewById(R.id.button_login).setOnClickListener(this);
         findViewById(R.id.button_signOut).setOnClickListener(this);
         findViewById(R.id.uden_login_button).setOnClickListener(this);
 
-        myMail = (EditText)findViewById(R.id.email_Edittext);
-        myPassword = (EditText)findViewById(R.id.password_Edittext);
+        myMail = (EditText) findViewById(R.id.email_Edittext);
+        myPassword = (EditText) findViewById(R.id.password_Edittext);
 
         firebaseAuth = FirebaseAuth.getInstance();
 
@@ -59,15 +69,41 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null){
+                if (user != null) {
                     Log.d(TAG, "Succes" + user.getUid());
                 } else {
                     Log.d(TAG, "Ingen Succes");
                 }
             }
         };
+
+
         updateStatus();
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.login_item:
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
+                return true; // true: menu processing done, no further actions
+             // true: menu processing done, no further actions
+            case R.id.add_item:
+                Intent intentAdd = new Intent(this, AddReservationActivity.class);
+                startActivity(intentAdd);
+                return true; // true: menu processing done, no further actions
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+
 
     @Override
     protected void onStart() {
@@ -231,5 +267,59 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //i.putStringArrayListExtra("logArray", log);
         MainActivity.this.startActivity(i);
     }
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+
+        return gestureDetector.onTouchEvent(event);
+    }
+
+    @Override
+    public boolean onDown(MotionEvent motionEvent) {
+        return false;
+    }
+
+    @Override
+    public void onShowPress(MotionEvent motionEvent) {
+
+    }
+
+    @Override
+    public boolean onSingleTapUp(MotionEvent motionEvent) {
+        return false;
+    }
+
+    @Override
+    public boolean onScroll(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
+        return false;
+    }
+
+    @Override
+    public void onLongPress(MotionEvent motionEvent) {
+
+    }
+
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        //Toast.makeText(this, "onFling", Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "onFling " + e1.toString() + "::::" + e2.toString());
+
+        boolean leftSwipe = e1.getX() > e2.getX();
+        Log.d(TAG, "onFling left: " + leftSwipe);
+        if (leftSwipe) {
+            Intent intent = new Intent(this, RoomActivity.class);
+            startActivity(intent);
+            //ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(this);
+            //Bundle options = activityOptionsCompat.toBundle();
+            //startActivity(intent, options);
+
+        }
+        return true; // done
+    }
+
+    public void buttonClicked(View view) {
+        Log.d(TAG, "button clicked");
+    }
+
 }
+
 

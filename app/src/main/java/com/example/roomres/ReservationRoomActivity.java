@@ -46,10 +46,14 @@ public class ReservationRoomActivity extends AppCompatActivity {
     private boolean delete = false;
     private FloatingActionButton delfab;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reservationroom);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
 
         Intent intent = getIntent();
         room = (Room) intent.getSerializableExtra(ROOM);
@@ -59,7 +63,38 @@ public class ReservationRoomActivity extends AppCompatActivity {
 
         TextView roomLabelTxtView = findViewById(R.id.roomName);
         roomLabelTxtView.setText(room.toString());
+
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         getDataUsingOkHttpEnqueue();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.login_item:
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
+                return true; // true: menu processing done, no further actions
+            // true: menu processing done, no further actions
+            case R.id.add_item:
+                Intent intentAdd = new Intent(this, AddReservationActivity.class);
+                startActivity(intentAdd);
+                return true; // true: menu processing done, no further actions
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     public void addReservation(View view) {
@@ -152,7 +187,7 @@ public class ReservationRoomActivity extends AppCompatActivity {
     }
 
     public void deleteReservation(Reservation reservation) {
-        final String url = "http://anbo-roomreservationv3.azurewebsites.net½/api/reservations/" + reservation.getId();
+        final String url = "http://anbo-roomreservationv3.azurewebsites.net/api/reservations/" + reservation.getId();
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url(url).delete().build();
         client.newCall(request).enqueue(new Callback() {

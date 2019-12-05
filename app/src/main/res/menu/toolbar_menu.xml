@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/login_item"
+        android:title="login page"
+        app:showAsAction="never|withText"/>
+
+
+    <item
+        android:id="@+id/add_item"
+        android:title="add Reservation"
+        app:showAsAction="never|withText"/>
+
+
+</menu>
